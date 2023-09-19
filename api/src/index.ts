@@ -44,6 +44,7 @@ app.post('/sets', async (req, res) => {
 app.get('/sets', async (req, res) => {
   const sets = await client.db.sets
     .select(['id', 'title', 'description', 'image', 'cards'])
+    .filter({ private: false })
     .getAll();
   return res.json(sets);
 });
