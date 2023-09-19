@@ -2,7 +2,7 @@
 
 This is a React Native Anki learning card clone with Expo Router and Express server using a [Xata database](https://xata.io/).
 
-To run the project, check out the [myShop-app](./myShop-app) and [myShop-server](./express-server) directories.
+To run the project, check out the [Anki App](./ankiApp) and [Express API](./api) directories.
 
 ## Screenshots
 
