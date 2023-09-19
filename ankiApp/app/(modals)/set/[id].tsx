@@ -19,6 +19,7 @@ const Page = () => {
     loadSet();
   }, [id]);
 
+  // Add as a favorite and go back
   const onAddToFavorites = async () => {
     await addToFavorites(id!);
     router.push('/(tabs)/sets');
@@ -30,7 +31,9 @@ const Page = () => {
         <View style={{ alignItems: 'flex-start', padding: 16, gap: 10, flex: 1 }}>
           <Text style={styles.header}>{set.title}</Text>
           <Text style={{ color: '#666' }}>{set.cards} Cards</Text>
-          <Image source={{ uri: set.image.url }} style={{ width: '100%', height: 200 }} />
+          {set.image && (
+            <Image source={{ uri: set.image.url }} style={{ width: '100%', height: 200 }} />
+          )}
           <Text>{set.description}</Text>
           <Text style={{ color: '#666' }}>Created by: {set.creator}</Text>
         </View>

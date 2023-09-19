@@ -1,12 +1,10 @@
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { Card, getLearnCards, saveLearning } from '@/data/api';
 import { defaultStyleSheet } from '@/constants/Styles';
 import Animated, {
   interpolate,
-  runOnJS,
-  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -51,17 +49,18 @@ const Page = () => {
   useEffect(() => {
     const loadCards = async () => {
       const cards = await getLearnCards(id!, limit!);
-      console.log('🚀 ~ file: [id].tsx:14 ~ getLearnCards ~ cards:', cards);
       setCards(cards);
     };
     loadCards();
   }, []);
 
+  // Rotate the card
   const onShowAnswer = () => {
     rotate.value = 1;
     setShowFront(false);
   };
 
+  // Show next card
   const onNextCard = async (correct: boolean) => {
     if (currentIndex < cards.length - 1) {
       correct ? setCorrectCards(correctCards + 1) : setWrongCards(wrongCards + 1);

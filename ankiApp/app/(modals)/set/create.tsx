@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, Image } from 'react-native';
 import React, { useState } from 'react';
 import { defaultStyleSheet } from '@/constants/Styles';
 import { TextInput } from 'react-native-gesture-handler';
@@ -16,7 +16,6 @@ const Page = () => {
   });
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -25,17 +24,15 @@ const Page = () => {
       quality: 0.5,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setInformation({ ...information, image: result.assets[0].base64 });
     }
   };
 
+  // Create set, add new favorite and go back
   const onCreateSet = async () => {
     const newSet = await createSet(information);
     await addToFavorites(newSet.id!);
-
     router.back();
   };
 

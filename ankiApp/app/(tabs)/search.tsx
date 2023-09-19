@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Set, getSets } from '@/data/api';
@@ -13,20 +14,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { transformImage } from '@xata.io/client';
-import { defaultStyleSheet } from '../../constants/Styles';
+import { defaultStyleSheet } from '@/constants/Styles';
 
 const Page = () => {
   const [sets, setSets] = useState<Set[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Load available Sets
   useEffect(() => {
-    const loadSets = async () => {
-      const data = await getSets();
-      console.log('🚀 ~ file: search.tsx:25 ~ loadSets ~ data:', data);
-      setSets(data);
-    };
     loadSets();
   }, []);
+
+  const loadSets = async () => {
+    const data = await getSets();
+    setSets(data);
+  };
 
   // Render a row for each Set
   const renderSetRow: ListRenderItem<Set> = ({ item }) => {
@@ -54,7 +56,12 @@ const Page = () => {
 
   return (
     <View style={defaultStyleSheet.container}>
-      <FlatList data={sets} renderItem={renderSetRow} keyExtractor={(item) => item.id} />
+      <FlatList
+        data={sets}
+        renderItem={renderSetRow}
+        keyExtractor={(item) => item.id}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={loadSets} />}
+      />
     </View>
   );
 };

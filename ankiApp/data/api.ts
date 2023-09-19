@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
 export const USER_STORAGE_KEY = 'userid';
 
+//
+// INTERFACES
+//
 export interface Set {
   cards: number;
   description: string;
@@ -18,10 +19,34 @@ export interface Card {
   id: string;
   question: string;
   image?: any;
+  set: string;
 }
+
+//
+// SET CALLS
+//
+export const createSet = async (set: Partial<Set>) => {
+  const user = await AsyncStorage.getItem(USER_STORAGE_KEY);
+
+  const response = await fetch(`${API_URL}/sets`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ...set, creator: user }),
+  });
+  return response.json();
+};
 
 export const getSets = async (): Promise<Set[]> => {
   const response = await fetch(`${API_URL}/sets`);
+  return response.json();
+};
+
+export const deleteSet = async (setid: string) => {
+  const response = await fetch(`${API_URL}/sets/${setid}`, {
+    method: 'DELETE',
+  });
   return response.json();
 };
 
@@ -51,10 +76,33 @@ export const addToFavorites = async (set: string) => {
   return response.json();
 };
 
+//
+// CARDS CALLS
+//
 export const getLearnCards = async (setid: string, limit: string) => {
   const response = await fetch(`${API_URL}/cards/learn?setid=${setid}&limit=${limit}`);
   return response.json();
 };
+
+export const getCardsForSet = async (setid: string) => {
+  const response = await fetch(`${API_URL}/cards?setid=${setid}`);
+  return response.json();
+};
+
+export const createCard = async (card: Partial<Card>) => {
+  const response = await fetch(`${API_URL}/cards`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(card),
+  });
+  return response.json();
+};
+
+//
+// LEARNINGS CALLS
+//
 
 export const saveLearning = async (
   setid: string,
@@ -78,23 +126,5 @@ export const getUserLearnings = async () => {
   const user = await AsyncStorage.getItem(USER_STORAGE_KEY);
 
   const response = await fetch(`${API_URL}/learnings?user=${user}`);
-  return response.json();
-};
-
-export const createSet = async (set: Partial<Set>) => {
-  const user = await AsyncStorage.getItem(USER_STORAGE_KEY);
-
-  const response = await fetch(`${API_URL}/sets`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ ...set, creator: user }),
-  });
-  return response.json();
-};
-
-export const getCardsForSet = async (setid: string) => {
-  const response = await fetch(`${API_URL}/cards?setid=${setid}`);
   return response.json();
 };

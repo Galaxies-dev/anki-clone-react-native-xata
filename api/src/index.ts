@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { getXataClient } from './xata';
+import { SetsRecord, getXataClient } from './xata';
 import { cardsCapitals, cardsProgramming, sets } from './seed_database';
 
 dotenv.config();
@@ -9,7 +9,6 @@ const { PORT } = process.env;
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
-// app.use(express.urlencoded({ limit: '50mb' }));
 
 const client = getXataClient();
 
@@ -54,6 +53,20 @@ app.get('/sets/:id', async (req, res) => {
   const { id } = req.params;
   const set = await client.db.sets.read(id);
   return res.json(set);
+});
+
+// Remove a set
+app.delete('/sets/:id', async (req, res) => {
+  const { id } = req.params;
+  const existingSets = await client.db.user_sets.filter({ set: id }).getAll();
+
+  if (existingSets.length > 0) {
+    const toDelete = existingSets.map((set: SetsRecord) => set.id);
+    await client.db.user_sets.delete(toDelete);
+  }
+  await client.db.sets.delete(id);
+
+  return res.json({ success: true });
 });
 
 // Add a set to user favorites
@@ -133,7 +146,6 @@ app.post('/learnings', async (req, res) => {
     cards_wrong: +wrong,
     score: (+correct / +cardsTotal) * 100,
   };
-  console.log('🚀 ~ file: index.ts:131 ~ app.post ~ obj:', obj);
   const learning = await client.db.learnings.create(obj);
   return res.json(learning);
 });
@@ -149,5 +161,5 @@ app.get('/learnings', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`);
+  console.log(`App listening on port ${PORT}`);
 });
