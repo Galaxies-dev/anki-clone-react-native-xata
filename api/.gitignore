@@ -36,3 +36,7 @@ lerna-debug.log*
 
 .prod.env
 .dev.env
+
+.env
+.xata/*
+.xatarc
